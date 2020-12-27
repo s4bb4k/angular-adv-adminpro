@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { UsuarioService } from '../../services/usuario.service';
+import { Router } from '@angular/router';
+
+declare const gapi;
 
 @Component({
   selector: 'app-header',
@@ -8,9 +12,34 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  public auth2: any;
+
+  constructor(private usuarioService: UsuarioService,
+              private router: Router,
+              private ngZone: NgZone) { }
 
   ngOnInit(): void {
+    this.googleInit();
   }
 
+  logout() {
+    this.usuarioService.logout();
+    this.auth2.signOut().then(() => {
+      this.ngZone.run(() => {
+        this.router.navigateByUrl('/login');
+      })
+    });
+  }
+
+  googleInit() {
+    gapi.load('auth2', () => {
+      // Retrieve the singleton for the GoogleAuth library and set up the client.
+      this.auth2 = gapi.auth2.init({
+        client_id: '786798673943-lhvvpnr96r2ccv7fvc28h75qlffjapev.apps.googleusercontent.com',
+        cookiepolicy: 'single_host_origin',
+        // Request scopes in addition to 'profile' and 'email'
+        //scope: 'additional_scope'
+      });
+    });
+  }
 }
