@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { UsuarioService } from '../../services/usuario.service';
 import { Router } from '@angular/router';
+import { Usuario } from '../../models/usuario.model';
 
 declare const gapi;
 
@@ -13,10 +14,13 @@ declare const gapi;
 export class HeaderComponent implements OnInit {
 
   public auth2: any;
+  public usuario: Usuario;
 
   constructor(private usuarioService: UsuarioService,
               private router: Router,
-              private ngZone: NgZone) { }
+              private ngZone: NgZone) { 
+                this.usuario = usuarioService.usuario;
+  }
 
   ngOnInit(): void {
     this.googleInit();
