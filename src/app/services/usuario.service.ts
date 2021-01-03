@@ -41,6 +41,15 @@ export class UsuarioService {
       }
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.usuario.role;
+  }
+
+  guardarLocalStorage( token: string, menu: any ) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
   googleInit() {
     return new Promise<void> ( resolve => {
       console.log('google init');
@@ -67,9 +76,11 @@ export class UsuarioService {
         }
       }).pipe(
         map((res: any) => {
+
           const { email, google, nombre, role, img = '', uid } = res.usuarioDB;
           this.usuario = new Usuario(nombre, email, '', img, google, role, uid);
-          localStorage.setItem('token', res.token);
+          
+          this.guardarLocalStorage(res.token, res.menu);
           return true;
         }),
         catchError(error => of(false))
@@ -81,6 +92,7 @@ export class UsuarioService {
                 .pipe(
                   tap( (res: any) => {
                     localStorage.setItem('token', res.token);
+                    this.guardarLocalStorage(res.token, res.menu);
                   })
                )
   }
@@ -99,7 +111,7 @@ export class UsuarioService {
     return this.http.post(`${ base_url }/login`, formData)
                 .pipe(
                    tap( (res: any) => {
-                     localStorage.setItem('token', res.token);
+                    this.guardarLocalStorage(res.token, res.menu);
                    })
                 )
   }
@@ -108,7 +120,7 @@ export class UsuarioService {
     return this.http.post(`${ base_url }/login/google`, { token })
                 .pipe(
                    tap( (res: any) => {
-                     localStorage.setItem('token', res.token);
+                    this.guardarLocalStorage(res.token, res.menu);
                    })
                 )
   }

@@ -46,4 +46,12 @@ export class HeaderComponent implements OnInit {
       });
     });
   }
+
+  buscar(termino: string) {
+    if( termino.length == 0 ) {
+        return;
+    }
+    this.router.navigateByUrl(`/dashboard/buscar/${ termino }`);
+  }
+
 }
